@@ -7,8 +7,6 @@ const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(w, h)
 document.body.appendChild(renderer.domElement)
 
-console.log(w)
-console.log(h)
 
 const fov = 75;
 const aspect = w / h
@@ -19,23 +17,29 @@ camera.position.z = 5
 const scene = new THREE.Scene()
 
 // first book
+const leatherTexture = new THREE.TextureLoader().load('../textures/leather.jpg')
+const leatherMaterial = new THREE.MeshBasicMaterial({ map: leatherTexture });
+const plainMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
 const geo = new THREE.BoxGeometry(1.8, 2.5, 0.15)
-const mat = new THREE.MeshStandardMaterial({
-    color: 0xccff
-})
-const mesh = new THREE.Mesh(geo, mat)
+// const mat = new THREE.MeshStandardMaterial({
+//     // color: 0xccff
+//     map: leatherTexture 
+// })
+
+// Create an array of materials
+const materials = [
+    leatherMaterial, // Right side
+    leatherMaterial, // Left side
+    plainMaterial,    // Top side
+    plainMaterial,    // Bottom side
+    leatherMaterial, // Front side
+    leatherMaterial  // Back side
+];
+
+const mesh = new THREE.Mesh(geo, materials)
 scene.add(mesh)
 
-
-
-// Add wire to mesh
-const wireMat = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    wireframe: true
-});
-const wireMesh = new THREE.Mesh(geo, wireMat);
-wireMesh.scale.setScalar(1.0001)
-// mesh.add(wireMesh)
 
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1)
 scene.add(hemiLight)

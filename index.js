@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import {createBookMesh, tiltOnLeftBook} from "/threejs/objects/book.js";
 
 
 const w = window.innerWidth
@@ -15,37 +16,40 @@ const aspect = w / h
 const near = 0.1
 const far = 10
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
-camera.position.z = 5
+camera.position.z = 8
 const scene = new THREE.Scene()
 
-// first book
-const geo = new THREE.BoxGeometry(1.8, 2.5, 0.15)
+// Setup mesh
+const _empty = new THREE.BoxGeometry(0, 0, 0)
+const _empty_mat = new THREE.MeshStandardMaterial({
+    color: 0xccff
+})
+const empty = new THREE.Mesh(_empty, _empty_mat)
+
+const mesh = empty
+scene.add(mesh)
+
+
+// Bookshelf
+const geo = new THREE.BoxGeometry(1.8, 0.1, 6)
 const mat = new THREE.MeshStandardMaterial({
     color: 0xccff
 })
-const mesh = new THREE.Mesh(geo, mat)
-console.log(mesh.position)
-scene.add(mesh)
+const bookshelf = new THREE.Mesh(geo, mat)
+bookshelf.position.set(0,-1.3,0)
+mesh.add(bookshelf)
 
-// second book
-const geo2 = new THREE.BoxGeometry(1.8, 2.5, 0.15)
-const mat2 = new THREE.MeshStandardMaterial({
-    color: 0xccff
-})
-const mesh2 = new THREE.Mesh(geo2, mat2)
-mesh2.position.set(0,0, 0.23)
-mesh2.rotateX(-0.06)
-mesh.add(mesh2)
+// first book
+const book1 = createBookMesh()
+mesh.add(book1)
+book1.position.set(0, 0, -2.8)
 
 
-// Add wire to mesh
-const wireMat = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    wireframe: true
-});
-const wireMesh = new THREE.Mesh(geo, wireMat);
-wireMesh.scale.setScalar(1.0001)
-// mesh.add(wireMesh)
+// tilt book
+const book2 = createBookMesh()
+tiltOnLeftBook(book1, book2)
+mesh.add(book2)
+
 
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1)
 scene.add(hemiLight)
